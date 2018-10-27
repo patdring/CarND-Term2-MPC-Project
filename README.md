@@ -1,7 +1,86 @@
+[//]: # (Image References)
+[image1]: ./pictures/MPC_loop.jpg
+
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+
+# [Rubic](https://review.udacity.com/#!/rubrics/896/view) points
+
+## Compilation
+
+### Your code should compile.
+
+- Code compiles without errors. 
+- No modifications were done on the provided setup.
+
+## Implementation
+
+### Description of the model used in the Model Predictive Control loop.
+
+The implementation follows the following diagram. The blocks shown can also be found in the code.
+The model used is a Kinematic model considering the  interactions between the tires and the road. 
+
+![alt text][image1]
+
+For understanding, at least the most important parameters should be briefly explained below.
+
+```
+State:
+- `x, y` : Position
+- `psi` : Heading direction
+- `v` : Velocity
+- `cte` : Cross-track error
+- `epsi` : Orientation error
+
+
+Model:
+- `Lf`: Length between the centre of mass of the car and the front wheels.
+
+Output:
+- `delta` : Steering angle
+- `a` : Acceleration (throttle)
+
+
+```
+
+Target is to find values for `delta` and `a` which are decreasing the output of an valuation function. The valuation consists of:
+
+- (Square) sum of `cte` and `epsi`.
+- (Square) sum of the difference between actuators to penalize a lot of actuator's actions
+- (Square) sum of the difference between two consecutive actuator values to penalize quick changes
+
+The individual factors were weighted manually and by trial and error.
+
+### Timestep Length and Elapsed Duration (N and dt)
+
+The definition of the prediction horizion is defined by the parameters:
+
+```
+- N: Number of points
+- dt: Time intervall
+```
+
+These parameters have a strong influence on the performance and have been chosen by me to take this into account.
+
+```
+- N: 7
+- dt: 0.1
+```
+
+### Polynomial Fitting and MPC Preprocessing
+
+Simulator provided waypoints have to be transformed into cars coordinate system. Then a 3rd- degree polynomial function is fitted to these new, transformed waypoints. Cross-track and orientation errors are calculated and used (by the solver block in the diagram above) to define a trajectory.
+
+
+### Model Predictive Control with Latency
+
+State vector values are calculated by using the model and the given delay interval. These vector is then used instead.
+
+### The vehicle must successfully drive a lap around the track.
+
+A video with the final parameters and a successfully passed lap can be found here : [./videos/mpc_controller.ogv](./videos/mpc_controller.ogv).
 
 ## Dependencies
 
