@@ -69,6 +69,14 @@ These parameters have a strong influence on the performance and have been chosen
 - dt: 0.1
 ```
 
+I was able to determine the following while experimenting with the values N and dt:
+
+- A smaller dt is better because it increases the resolution. At the same time more calculation steps are necessary which has a negative effect on the performance.
+
+- The same applies to parameter N. The larger the parameter, the longer the calculation time.
+
+- We want these two parameters set in a way that the MPC is fast enough to control the car in real time.
+
 ### Polynomial Fitting and MPC Preprocessing
 
 Simulator provided waypoints have to be transformed into cars coordinate system. Then a 3rd- degree polynomial function is fitted to these new, transformed waypoints. Cross-track and orientation errors are calculated and used (by the solver block in the diagram above) to define a trajectory.
@@ -76,7 +84,7 @@ Simulator provided waypoints have to be transformed into cars coordinate system.
 
 ### Model Predictive Control with Latency
 
-State vector values are calculated by using the model and the given delay interval. These vector is then used instead.
+To implement a Model Predictive Control that handles a 100ms latency the state vector values are calculated by using the model and a included delay interval of 100ms. These ist implemented in [./src/main.cpp](./src/MPC.cpp#L104) from line 104ff. .I'm projecting the car’s current state 100ms into the future before running the solver method. 
 
 ### The vehicle must successfully drive a lap around the track.
 
